@@ -239,6 +239,12 @@
     <Reference Include="UnityEditor.Android.Extensions">
         <HintPath>D:/Unity/2019.4.0f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms">
+        <HintPath>E:/Unity/Project/AnimateCrawlSystem/Assets/Plugins/System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+        <HintPath>E:/Unity/Project/AnimateCrawlSystem/Assets/UnityPackages/JsonNet-Lite/Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
         <HintPath>E:/Unity/Project/AnimateCrawlSystem/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>

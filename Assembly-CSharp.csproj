@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\Module\Common\UIPanel.cs" />
      <Compile Include="Assets\Scripts\Module\Login\LoginPanel.cs" />
      <Compile Include="Assets\Scripts\Module\Login\RegisterPanel.cs" />
+     <None Include="Assets\Shaders\Skybox Cubemap Extended.shader" />
      <None Include="Assets\Shaders\ImProcessing.shader" />
     <Reference Include="UnityEngine">
         <HintPath>D:/Unity/2019.4.0f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
