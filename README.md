@@ -56,6 +56,7 @@ Unity Version: 2019.4.0f1
 - Simple RGB chanel
 - Gray Level
 - Simple Cartoon
+- Edge Sharpen
 
 ---
 

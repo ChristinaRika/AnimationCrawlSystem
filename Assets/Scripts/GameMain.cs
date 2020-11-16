@@ -14,5 +14,4 @@ public class GameMain : MonoBehaviour
         //Open login panel
         PanelManager.Open<LoginPanel>();
     }
-    
 }

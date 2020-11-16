@@ -101,6 +101,7 @@ Shader "Skybox/Cubemap Extended"
 			uniform half _FogSmoothness;
 			uniform half _FogFill;
 			uniform half _FogIntensity;
+
 			inline half3 DecodeHDR1189( half4 Data )
 			{
 				return DecodeHDR(Data, _Tex_HDR);
@@ -157,6 +158,7 @@ Shader "Skybox/Cubemap Extended"
 				fixed4 finalColor;
 				float3 vertexToFrag774 = i.ase_texcoord.xyz;
 				half4 Data1189 = texCUBE( _Tex, vertexToFrag774 );
+
 				half3 localDecodeHDR1189 = DecodeHDR1189( Data1189 );
 				half4 CUBEMAP222 = ( float4( localDecodeHDR1189 , 0.0 ) * unity_ColorSpaceDouble * _TintColor * _Exposure );
 				float lerpResult678 = lerp( saturate( pow( (0.0 + (abs( ( i.ase_texcoord1.xyz.y + -_FogPosition ) ) - 0.0) * (1.0 - 0.0) / (_FogHeight - 0.0)) , ( 1.0 - _FogSmoothness ) ) ) , 0.0 , _FogFill);

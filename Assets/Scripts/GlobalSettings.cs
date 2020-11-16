@@ -23,8 +23,13 @@ public class GlobalSettings : MonoBehaviour
     public Slider pixelSizeSlider;
     private int pixelSize = 1;
 
+    public Slider intensitySlider;
+    
+    [Range(0,2)] private float intensity = 0.0f;
+    private int edge = 0;
 
     public Material material;
+
 
     // Update is called once per frame
     void Update()
@@ -39,6 +44,8 @@ public class GlobalSettings : MonoBehaviour
         material.SetFloat("blueStrength",blueStrength);
         material.SetFloat("greenStrength",greenStrength);
         material.SetInt("_PixelSize", pixelSize);
+        material.SetInt("_Edge", edge);
+        material.SetFloat("_Intensity", intensity);
     }
     
     public void ValueChange(){
@@ -50,11 +57,19 @@ public class GlobalSettings : MonoBehaviour
         blueStrength = blueStrengthSlider.value;
         greenStrength = greenStrengthSlider.value;
         pixelSize = (int)pixelSizeSlider.value;
+        intensity = intensitySlider.value;
+
     }
     public void SetCartoon(){
         cartoon = 1;
     }
     public void UnSetCartoon(){
         cartoon = 0;
+    }
+    public void SetEdge(){
+        edge = 1;
+    }
+    public void UnSetEdge(){
+        edge = 0;
     }
 }

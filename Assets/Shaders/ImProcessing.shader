@@ -8,23 +8,26 @@ Shader "Custom/ImProcessing"
         hstep("HorizontalStep", Range(0,1)) = 0.5
         vstep("VerticalStep", Range(0,1)) = 0.5  
         fadeLevel("Fade Level", Range(0,1)) = 1.0
-        cartoon("cartoon", int) = 0 
+        cartoon("cartoon", Int) = 0 
         redStrength("Red Strength", Range(0,1)) = 1.0
         greenStrength("Green Strength", Range(0,1)) = 1.0
         blueStrength("Blue Strength", Range(0,1)) = 1.0
-        _PixelSize ("PixelSize", Range(1, 100)) = 1
+        _PixelSize ("PixelSize", Range(1, 100)) = 1   
+        _Edge("Edge", Int) = 0
+        _Intensity("Intensity", Range(0, 2)) = 0
     }
 
     SubShader
     {
         Tags {"Queue"="Transparent" "IgnoreProjector"="true" "RenderType"="Transparent"}
-        ZWrite Off Blend SrcAlpha OneMinusSrcAlpha Cull Off
+        ZWrite Off Blend SrcAlpha OneMinusSrcAlpha Cull Off ZTest Always
         Pass
         {    
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma fragmentoption ARB_precision_hint_fastest
+            #pragma multi_compile_fog
             #include "UnityCG.cginc"
 
             struct appdata_t
@@ -35,9 +38,10 @@ Shader "Custom/ImProcessing"
             };    
             struct v2f
             {
-                half2 texcoord  : TEXCOORD0;
+                half2 texcoord[9]  : TEXCOORD0;
                 float4 vertex   : SV_POSITION;
                 fixed4 color    : COLOR;
+                UNITY_FOG_COORDS(1)
             };
 
             sampler2D _MainTex;
@@ -49,24 +53,74 @@ Shader "Custom/ImProcessing"
             float greenStrength;
             float blueStrength;
             int _PixelSize;
+            float _Intensity;
+            int _Edge;
 
             float hstep;
             float vstep;
+
+            fixed4 _EdgeColor = fixed4(0,0,0,1);
+            fixed4 _BackgroundColor = fixed4(1,1,1,1);
+
+            float4 _MainTex_TexelSize;
 
             v2f vert(appdata_t IN)
             {
                 v2f OUT;
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
-                OUT.texcoord = IN.texcoord;
-                OUT.color = IN.color;
+                
+                half2 uv = IN.texcoord;
+                half2 size = _MainTex_TexelSize;
+
+                OUT.texcoord[0] = uv + size * half2(-1, 1);
+                OUT.texcoord[1] = uv + size * half2(0, 1);
+                OUT.texcoord[2] = uv + size * half2(1, 1);
+                OUT.texcoord[3] = uv + size * half2(-1, 0);
+                OUT.texcoord[4] = uv + size * half2(0, 0);
+                OUT.texcoord[5] = uv + size * half2(1, 0);
+                OUT.texcoord[6] = uv + size * half2(-1, -1);
+                OUT.texcoord[7] = uv + size * half2(0, -1);
+                OUT.texcoord[8] = uv + size * half2(1, -1);
+
+                UNITY_TRANSFER_FOG(OUT,OUT.vertex);
+
                 return OUT;
             }
-            float4 _MainTex_TexelSize;
+            fixed minGrayCompute(v2f i,int idx) 
+            {
+                return Luminance(tex2D(_MainTex, i.texcoord[idx]));
+            }
+            half sobel(v2f i) 
+            {
+                const half Gx[9] = {
+                    - 1,0,1,
+                    - 2,0,2,
+                    - 1,0,1
+                };
+                const half Gy[9] = {
+                    -1,-2,-1,
+                    0, 0, 0,
+                    1, 2, 1
+                };
 
-            float4 frag(v2f i) : COLOR
+                //set horizontal and vertical gradient
+                half graX = 0;
+                half graY = 0;
+                
+                for (int it = 0; it < 9; it++) 
+                {
+                    graX += Gx[it] * minGrayCompute(i, it);
+                    graY += Gy[it] * minGrayCompute(i, it);
+                }
+                
+                return abs(graX) + abs(graY);
+            }
+            
+
+            float4 frag(v2f i) : SV_TARGET
             {    
-                float2 uv = i.texcoord.xy;
-                float4 sum = float4(0.0, 0.0, 0.0, 0.0);
+                float2 uv = i.texcoord[4];
+                fixed4 sum = float4(0.0, 0.0, 0.0, 0.0);
                 float2 tc = uv;
 
                 //pixel
@@ -119,7 +173,15 @@ Shader "Custom/ImProcessing"
                     else if(sum.b > 0.8)sum.b = 1.0;
                 }
 
-                return float4(sum.rgb, 1);
+                if(_Edge){
+                    half gra = sobel(i);
+                    fixed4 withEdgeColor = lerp( sum, _EdgeColor, gra);
+                    fixed4 onlyEdgeColor = lerp( _BackgroundColor, _EdgeColor, gra);
+                    sum = lerp(withEdgeColor, onlyEdgeColor, pow(_Intensity, 5));
+                    UNITY_APPLY_FOG(i.fogCoord, sum);
+                }
+                
+                return fixed4(sum.rgb, 1);
             }    
             ENDCG
         }
