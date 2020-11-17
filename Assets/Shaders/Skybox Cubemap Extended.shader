@@ -42,16 +42,13 @@ Shader "Skybox/Cubemap Extended"
 		ColorMask RGBA
 		ZWrite Off
 		ZTest LEqual
-		
-		
+			
 		
 		Pass
 		{
 			Name "Unlit"
 			Tags { "LightMode"="ForwardBase" }
 			CGPROGRAM
-
-			
 
 			#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
 			//only defining to not throw compilation error over Unity 5.5

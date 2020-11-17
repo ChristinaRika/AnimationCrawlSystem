@@ -99,8 +99,8 @@ Shader "Custom/ImProcessing"
                 };
                 const half Gy[9] = {
                     -1,-2,-1,
-                    0, 0, 0,
-                    1, 2, 1
+                    0 , 0, 0,
+                    1 , 2, 1
                 };
 
                 //set horizontal and vertical gradient

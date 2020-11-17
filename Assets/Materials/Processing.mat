@@ -91,7 +91,7 @@ Material:
     - fadeLevel: 1
     - greenStrength: 1
     - hstep: 0.5
-    - radius: 0
+    - radius: 1
     - redStrength: 1
     - resolution: 802.66
     - vstep: 0.5
