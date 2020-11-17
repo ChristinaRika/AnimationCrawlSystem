@@ -14,6 +14,7 @@ public class UIPanel : BasePanel {
     private InputField tagInput;
     private Button nextBtn;
     private Button exportBtn;
+    private Button exitBtn;
 
     private Image image;
 
@@ -31,10 +32,12 @@ public class UIPanel : BasePanel {
         image = skin.transform.Find ("Viewport").GetComponent<Image> ();
         tagInput = skin.transform.Find ("imageTag").GetComponent<InputField> ();
         exportBtn = skin.transform.Find ("ExportBtn").GetComponent<Button> ();
+        exitBtn = skin.transform.Find("ExitBtn").GetComponent<Button>();
         //listener
         openBtn.onClick.AddListener (OnGetClick);
         nextBtn.onClick.AddListener (OnNextClick);
         exportBtn.onClick.AddListener (OnExportClick);
+        exitBtn.onClick.AddListener (OnExitClick);
     }
     public override void OnClose () {
         //exit handle
@@ -109,5 +112,8 @@ public class UIPanel : BasePanel {
     }
     public void OnExportClick () {
         PanelManager.Open<ExportPanel> (image);
+    }
+    public void OnExitClick () {
+        Application.Quit();
     }
 }

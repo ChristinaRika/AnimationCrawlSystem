@@ -15,6 +15,7 @@ public class LoginPanel : BasePanel {
     private Button loginButton;
     //Register button
     private Button registerButton;
+    private Button exitBtn;
 
     //Init
     public override void OnInit () {
@@ -28,13 +29,18 @@ public class LoginPanel : BasePanel {
         pwInput = skin.transform.Find ("PwInput").GetComponent<InputField> ();
         loginButton = skin.transform.Find ("LoginBtn").GetComponent<Button> ();
         registerButton = skin.transform.Find ("RegisterBtn").GetComponent<Button> ();
+        exitBtn = skin.transform.Find ("ExitBtn").GetComponent<Button> ();
         //Listen
         loginButton.onClick.AddListener (OnLoginClick);
         registerButton.onClick.AddListener (OnRegisterClick);
+        exitBtn.onClick.AddListener(OnExitClick);
     }
     //Close
     public override void OnClose () {
 
+    }
+    public void OnExitClick(){
+       Application.Quit();
     }
 
     //On login click 
