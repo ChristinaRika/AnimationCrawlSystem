@@ -7,14 +7,16 @@ Shader "Custom/ImProcessing"
         resolution ("Resolution", float) = 800  
         hstep("HorizontalStep", Range(0,1)) = 0.5
         vstep("VerticalStep", Range(0,1)) = 0.5  
-        fadeLevel("Fade Level", Range(0,1)) = 1.0
+        fadeLevel("Fade Level", Range(0,1)) = 0
         cartoon("cartoon", Int) = 0 
         redStrength("Red Strength", Range(0,1)) = 1.0
         greenStrength("Green Strength", Range(0,1)) = 1.0
         blueStrength("Blue Strength", Range(0,1)) = 1.0
         _PixelSize ("PixelSize", Range(1, 100)) = 1   
         _Edge("Edge", Int) = 0
-        _Intensity("Intensity", Range(0, 2)) = 0
+        _Intensity("_Intensity", Range(0, 1)) = 0
+        _BackgroundColor("_BackgroundColor", Color) = (1,1,1,1)
+        _EdgeColor("_EdgeColor", Color) = (0,0,0,1)
     }
 
     SubShader
@@ -59,8 +61,8 @@ Shader "Custom/ImProcessing"
             float hstep;
             float vstep;
 
-            fixed4 _EdgeColor = fixed4(0,0,0,1);
-            fixed4 _BackgroundColor = fixed4(1,1,1,1);
+            fixed4 _EdgeColor;
+            fixed4 _BackgroundColor;
 
             float4 _MainTex_TexelSize;
 
@@ -70,25 +72,24 @@ Shader "Custom/ImProcessing"
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
                 
                 half2 uv = IN.texcoord;
-                half2 size = _MainTex_TexelSize;
+                half2 size = _MainTex_TexelSize.xy;
 
-                OUT.texcoord[0] = uv + size * half2(-1, 1);
-                OUT.texcoord[1] = uv + size * half2(0, 1);
-                OUT.texcoord[2] = uv + size * half2(1, 1);
+                OUT.texcoord[0] = uv + size * half2(-1, -1);
+                OUT.texcoord[1] = uv + size * half2(0, -1);
+                OUT.texcoord[2] = uv + size * half2(1, -1);
                 OUT.texcoord[3] = uv + size * half2(-1, 0);
                 OUT.texcoord[4] = uv + size * half2(0, 0);
                 OUT.texcoord[5] = uv + size * half2(1, 0);
-                OUT.texcoord[6] = uv + size * half2(-1, -1);
-                OUT.texcoord[7] = uv + size * half2(0, -1);
-                OUT.texcoord[8] = uv + size * half2(1, -1);
+                OUT.texcoord[6] = uv + size * half2(-1, 1);
+                OUT.texcoord[7] = uv + size * half2(0, 1);
+                OUT.texcoord[8] = uv + size * half2(1, 1);
 
                 UNITY_TRANSFER_FOG(OUT,OUT.vertex);
 
                 return OUT;
             }
-            fixed minGrayCompute(v2f i,int idx) 
-            {
-                return Luminance(tex2D(_MainTex, i.texcoord[idx]));
+            fixed luminance(fixed4 color) {
+                return  0.2125 * color.r + 0.7154 * color.g + 0.0721 * color.b; 
             }
             half sobel(v2f i) 
             {
@@ -109,11 +110,11 @@ Shader "Custom/ImProcessing"
                 
                 for (int it = 0; it < 9; it++) 
                 {
-                    graX += Gx[it] * minGrayCompute(i, it);
-                    graY += Gy[it] * minGrayCompute(i, it);
+                    graX += Gx[it] * luminance(tex2D(_MainTex, i.texcoord[it]));
+                    graY += Gy[it] * luminance(tex2D(_MainTex, i.texcoord[it]));
                 }
                 
-                return abs(graX) + abs(graY);
+                return 1 - abs(graX) - abs(graY);
             }
             
 
@@ -146,11 +147,8 @@ Shader "Custom/ImProcessing"
 
                 //rgb
                 sum.rgb = float3(sum.r * redStrength, sum.g * greenStrength, sum.b * blueStrength);
-                // gray
-                float c = (sum.r+sum.g+sum.b)/3.0;
-                sum.r = sum.r * fadeLevel + c*(1-fadeLevel);
-                sum.g = sum.g * fadeLevel + c*(1-fadeLevel);
-                sum.b = sum.b * fadeLevel + c*(1-fadeLevel);
+                //gray
+                sum = lerp(sum, luminance(sum), fadeLevel);
 
                 // simple cartoon[if possible, use more methods]
                 if(cartoon == 1){
@@ -175,9 +173,9 @@ Shader "Custom/ImProcessing"
 
                 if(_Edge){
                     half gra = sobel(i);
-                    fixed4 withEdgeColor = lerp( sum, _EdgeColor, gra);
-                    fixed4 onlyEdgeColor = lerp( _BackgroundColor, _EdgeColor, gra);
-                    sum = lerp(withEdgeColor, onlyEdgeColor, pow(_Intensity, 5));
+                    fixed4 withEdgeColor = lerp( _EdgeColor, sum, gra);
+                    fixed4 onlyEdgeColor = lerp( _EdgeColor, _BackgroundColor, gra);
+                    sum = lerp(withEdgeColor, onlyEdgeColor, _Intensity);
                     UNITY_APPLY_FOG(i.fogCoord, sum);
                 }
                 

@@ -8,6 +8,7 @@ public class BasePanel : MonoBehaviour
     //Skin path
     public string skinPath;
     //Skin
+    
     public GameObject skin;
     //Layer
     public PanelManager.Layer layer = PanelManager.Layer.Panel;

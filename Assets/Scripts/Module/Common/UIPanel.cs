@@ -38,6 +38,7 @@ public class UIPanel : BasePanel {
         nextBtn.onClick.AddListener (OnNextClick);
         exportBtn.onClick.AddListener (OnExportClick);
         exitBtn.onClick.AddListener (OnExitClick);
+        crawlBtn.onClick.AddListener (OnCrawlClick);
     }
     public override void OnClose () {
         //exit handle
@@ -64,6 +65,22 @@ public class UIPanel : BasePanel {
             foreach (ImgUnit img in imgReceive.lists) {
                 StartCoroutine (LoadImages (img.file_name));
             }
+        }
+    }
+    public void OnCrawlClick(){
+        //StartCoroutine(CrawlImage(@"#########CRWALAPI########",tagInput.tag));//crwal
+    }
+    IEnumerator CrawlImage(string url, string tag){
+        WWWForm form = new WWWForm();
+        form.AddField("tag", tag);
+        UnityWebRequest request = UnityWebRequest.Post(url, form);
+        yield return request.SendWebRequest();
+        if(request.isHttpError||request.isNetworkError){
+            PanelManager.Open<TipPanel>(request.error);
+        }else{
+            string jsonForm = request.downloadHandler.text;
+            //Get text of message
+            //PanelManager.Open<TipPanel>(message);
         }
     }
     IEnumerator LoadImages (string file_name) {
