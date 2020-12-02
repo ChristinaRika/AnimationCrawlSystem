@@ -32,7 +32,7 @@ public class UIPanel : BasePanel {
         image = skin.transform.Find ("Viewport").GetComponent<Image> ();
         tagInput = skin.transform.Find ("imageTag").GetComponent<InputField> ();
         exportBtn = skin.transform.Find ("ExportBtn").GetComponent<Button> ();
-        exitBtn = skin.transform.Find("ExitBtn").GetComponent<Button>();
+        exitBtn = skin.transform.Find ("ExitBtn").GetComponent<Button> ();
         //listener
         openBtn.onClick.AddListener (OnGetClick);
         nextBtn.onClick.AddListener (OnNextClick);
@@ -58,39 +58,40 @@ public class UIPanel : BasePanel {
             PanelManager.Open<TipPanel> (request.error);
         } else {
             string jsonForm = request.downloadHandler.text;
-
             ImgReceive imgReceive = JsonConvert.DeserializeObject<ImgReceive> (jsonForm);
-            PanelManager.Open<TipPanel> (string.Format ("Read {0} Images.", imgReceive.lists.Count));
-            filePaths.Clear();//init file paths list
-            foreach (ImgUnit img in imgReceive.lists) {
-                StartCoroutine (LoadImages (img.file_name));
+            //Debug.Log (imgReceive.list[0].file_name);
+            PanelManager.Open<TipPanel> (string.Format ("Read {0} Images.", imgReceive.list.Count));
+            filePaths.Clear (); //init file paths list
+            foreach (ImgUnit img in imgReceive.list) {
+                StartCoroutine (LoadImages (img.file_name, tag));
             }
         }
     }
-    public void OnCrawlClick(){
+    public void OnCrawlClick () {
         //StartCoroutine(CrawlImage(@"#########CRWALAPI########",tagInput.tag));//crwal
     }
-    IEnumerator CrawlImage(string url, string tag){
-        WWWForm form = new WWWForm();
-        form.AddField("tag", tag);
-        UnityWebRequest request = UnityWebRequest.Post(url, form);
-        yield return request.SendWebRequest();
-        if(request.isHttpError||request.isNetworkError){
-            PanelManager.Open<TipPanel>(request.error);
-        }else{
+    IEnumerator CrawlImage (string url, string tag) {
+        WWWForm form = new WWWForm ();
+        form.AddField ("tag", tag);
+        UnityWebRequest request = UnityWebRequest.Post (url, form);
+        yield return request.SendWebRequest ();
+        if (request.isHttpError || request.isNetworkError) {
+            PanelManager.Open<TipPanel> (request.error);
+        } else {
             string jsonForm = request.downloadHandler.text;
             //Get text of message
             //PanelManager.Open<TipPanel>(message);
         }
     }
-    IEnumerator LoadImages (string file_name) {
+    IEnumerator LoadImages (string file_name, string tag) {
         //add image paths into List
-        filePaths.Add (string.Format ("http://mbp.kelo.xyz:15551/api/img/" + file_name));
+        filePaths.Add (string.Format ("mbp.kelo.xyz:15551/api/img?tagname={0}&filename={1}", tag, file_name));
         yield return null;
     }
 
     public void OnNextClick () {
         if (filePaths.Count != 0) {
+            Debug.Log (filePaths[imageIdx]);
             StartCoroutine (Load (filePaths[imageIdx]));
             imageIdx = (imageIdx + 1) % filePaths.Count;
         }
@@ -131,6 +132,6 @@ public class UIPanel : BasePanel {
         PanelManager.Open<ExportPanel> (image);
     }
     public void OnExitClick () {
-        Application.Quit();
+        Application.Quit ();
     }
 }
