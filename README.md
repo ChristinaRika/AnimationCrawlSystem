@@ -1,13 +1,24 @@
-Unity Version: 2019.4.0f1
+# Animation Crawl System
+- This is an animation crwal system created with Unity
 
-![avatar](001.png)
+- Unity version: 2019.4.0f1
+- Plantform: Windows Only
 
-![avatar](002.png)
+## Index
+
+- [Scripts](#scripts)
+- [External Packages](#packages)
+- [Shaders](#shaders)
+- [Usage](#usage)
+- [Scene Hierachy](#scene)
+- [Preview](#preview)
+
+<span id='scripts'></span>
 
 ## Scripts
 
----
 ### Base
+
 - ***PanelManager*** inherited of ***BasePanel***
 - **OnInit()[*BasePanel*]** set skinPath and layer.
 - **OnShow()[*BasePanel*]** add the event listener of UI.
@@ -34,9 +45,7 @@ Unity Version: 2019.4.0f1
 - ***GameMain*** init this program and open ***LoginPanel***.
 - ***GlobalSettings*** just handle properties of shader[*Shaders/ImProcessing.shaderlab*]. You can use Slider, InputField, etc to control these properties of shader.
 
----
-
-
+<span id='packages'></span>
 
 ## External Packages
 
@@ -44,9 +53,7 @@ Unity Version: 2019.4.0f1
 - Newtonsoft.Json.dll
 - Newtonsoft.Json.dll.mdb
 
----
-
-
+<span id='shaders'></span>
 
 ## Shaders
 
@@ -62,9 +69,16 @@ Unity Version: 2019.4.0f1
 - Simple Cartoon
 - Edge Sharpen
 
----
+<span id='usage'></span>
 
+## Usage
 
+- Clone this project(Unity Version is 2019.4.0f1)
+- Open this project with unity(root folder)
+- If open fail, you can also download the release[unitypackage] and then import into your project, this package contains the main scene.
+- When you want to update, you can replace your local Assets folder with Assets folder in git reporitory.
+
+<span id='scene'></span>
 
 ## Scene hierarchy
 
@@ -77,5 +91,13 @@ Unity Version: 2019.4.0f1
 1. Create a root(Empty Gameobject is recommend) of this panel and set root's parent of Panel/Tip.
 2. Just create a Canvas and then create your UI elements in it.
 3. Create a script of this panel you created. In this script, you need to set the skinPath and layer.
-4. When all thing is make down, drag the root into Resources folder to make it prefab, and delete the root in scene hierachy.
+4. When all thing is make down, drag the root into Resources folder to make it prefab, and delete the root in scene hieraochy.
 5. To use this panel, just use **PanelManager.Open<PanelType>(para)** in other script.
+
+<span id='preview'></span>
+
+## Preview
+
+![avatar](001.png)
+
+![avatar](002.png)
