@@ -81,8 +81,7 @@ public class UIPanel : BasePanel {
             string jsonForm = request.downloadHandler.text;
             CrawlRes cr = JsonConvert.DeserializeObject<CrawlRes>(jsonForm);
             //Get text of message
-            //PanelManager.Open<TipPanel>(cr.code.ToString());
-            Debug.Log(cr.meg);
+            PanelManager.Open<TipPanel>(cr.msg);
         }
     }
     IEnumerator LoadImages (string file_name, string tag) {
