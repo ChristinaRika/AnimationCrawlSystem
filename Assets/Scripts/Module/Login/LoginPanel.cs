@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System;
-using UnityEngine.Networking;
 using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class LoginPanel : BasePanel {
     //ID input
@@ -33,14 +33,14 @@ public class LoginPanel : BasePanel {
         //Listen
         loginButton.onClick.AddListener (OnLoginClick);
         registerButton.onClick.AddListener (OnRegisterClick);
-        exitBtn.onClick.AddListener(OnExitClick);
+        exitBtn.onClick.AddListener (OnExitClick);
     }
     //Close
     public override void OnClose () {
 
     }
-    public void OnExitClick(){
-       Application.Quit();
+    public void OnExitClick () {
+        Application.Quit ();
     }
 
     //On login click 
@@ -51,9 +51,9 @@ public class LoginPanel : BasePanel {
             return;
         }
         //login succ...
-        StartCoroutine(PostUserLoginMessage(idInput.text, pwInput.text, @"http://mbp.kelo.xyz:15551/api/login"));
+        StartCoroutine (PostUserLoginMessage (idInput.text, pwInput.text, @"http://mbp.unalian.ga:18231/api/login"));
         //HandleUserID();
-        
+
     }
     //On register click
     public void OnRegisterClick () {
@@ -61,28 +61,27 @@ public class LoginPanel : BasePanel {
     }
     IEnumerator PostUserLoginMessage (string id, string psw, string url) {
 
-        WWWForm form = new WWWForm();
-        form.AddField("username", id);
-        form.AddField("password", psw);
-        
+        WWWForm form = new WWWForm ();
+        form.AddField ("username", id);
+        form.AddField ("password", psw);
 
-        UnityWebRequest request = UnityWebRequest.Post(url, form);
-        yield return request.SendWebRequest();
+        UnityWebRequest request = UnityWebRequest.Post (url, form);
+        yield return request.SendWebRequest ();
 
-        if (request.isHttpError||request.isNetworkError)
-            PanelManager.Open<TipPanel>(request.error);
-        else
-        {
+        if (request.isHttpError || request.isNetworkError)
+            PanelManager.Open<TipPanel> (request.error);
+        else {
             string jsonForm = request.downloadHandler.text;
+            //Debug.Log(jsonForm);
 
-            LoginMsg loginMsg = JsonConvert.DeserializeObject<LoginMsg>(jsonForm);
+            LoginMsg loginMsg = JsonConvert.DeserializeObject<LoginMsg> (jsonForm);
 
-            if(loginMsg.code == 1){
+            if (loginMsg.code == 1) {
                 PanelManager.Open<UIPanel> ();
                 //Debug.Log(loginMsg.msg);
                 Close ();
-            }else{
-                PanelManager.Open<TipPanel>(loginMsg.msg);
+            } else {
+                PanelManager.Open<TipPanel> (loginMsg.msg);
             }
         }
     }
