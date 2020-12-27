@@ -44,7 +44,7 @@ public class UIPanel : BasePanel {
         //exit handle
     }
     public void OnGetClick () {
-        StartCoroutine (GetImage (@"http://mbp.kelo.xyz:15551/api/file", tagInput.text));
+        StartCoroutine (GetImage (@"http://mbp.unalian.ga:18231/api/file", tagInput.text));
     }
 
     IEnumerator GetImage (string url, string tag) {
@@ -68,30 +68,32 @@ public class UIPanel : BasePanel {
         }
     }
     public void OnCrawlClick () {
-        //StartCoroutine(CrawlImage(@"#########CRWALAPI########",tagInput.tag));//crwal
+        StartCoroutine(CrawlImage(@"http://mbp.unalian.ga:18231/api/spider",tagInput.tag));//crwal
     }
     IEnumerator CrawlImage (string url, string tag) {
         WWWForm form = new WWWForm ();
-        form.AddField ("tag", tag);
+        form.AddField ("tagname", tag);
         UnityWebRequest request = UnityWebRequest.Post (url, form);
         yield return request.SendWebRequest ();
         if (request.isHttpError || request.isNetworkError) {
             PanelManager.Open<TipPanel> (request.error);
         } else {
             string jsonForm = request.downloadHandler.text;
+            CrawlRes cr = JsonConvert.DeserializeObject<CrawlRes>(jsonForm);
             //Get text of message
-            //PanelManager.Open<TipPanel>(message);
+            //PanelManager.Open<TipPanel>(cr.code.ToString());
+            Debug.Log(cr.meg);
         }
     }
     IEnumerator LoadImages (string file_name, string tag) {
         //add image paths into List
-        filePaths.Add (string.Format ("mbp.kelo.xyz:15551/api/img?tagname={0}&filename={1}", tag, file_name));
+        filePaths.Add (string.Format ("http://mbp.unalian.ga:18231/api/img?tagname={0}&filename={1}", tag, file_name));
         yield return null;
     }
 
     public void OnNextClick () {
         if (filePaths.Count != 0) {
-            Debug.Log (filePaths[imageIdx]);
+            Debug.Log (filePaths[imageIdx]);//
             StartCoroutine (Load (filePaths[imageIdx]));
             imageIdx = (imageIdx + 1) % filePaths.Count;
         }
