@@ -68,7 +68,7 @@ public class UIPanel : BasePanel {
         }
     }
     public void OnCrawlClick () {
-        StartCoroutine(CrawlImage(@"http://mbp.unalian.ga:18231/api/spider",tagInput.tag));//crwal
+        StartCoroutine(CrawlImage(@"http://mbp.unalian.ga:18231/api/spider",tagInput.text));//crwal
     }
     IEnumerator CrawlImage (string url, string tag) {
         WWWForm form = new WWWForm ();
