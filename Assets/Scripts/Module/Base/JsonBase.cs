@@ -10,7 +10,7 @@ public class LoginMsg{
 public class RegisterMsg{
     //from server.
     //0:fail.  1:succ
-    public int code = 0;
+    public int code = -1;
     //server return message
     public string msg;
 }
@@ -20,5 +20,9 @@ public class ImgUnit{
 }
 
 public class ImgReceive{
-    public List<ImgUnit> lists = new List<ImgUnit>();
+    public List<ImgUnit> list = new List<ImgUnit>();//lists 艹
+}
+public class CrawlRes{
+    public int code = -1;
+    public string msg;
 }
